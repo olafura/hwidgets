@@ -3,8 +3,8 @@ from dbus.mainloop.glib import DBusGMainLoop
 import dbus
 import json
 import datetime
-import ConfigParser
 import couchdb
+from conf import getUsernamePassword
 
 DBusGMainLoop(set_as_default=True)
 loop = gobject.MainLoop()
@@ -12,10 +12,7 @@ bus = dbus.SystemBus()
 upower = bus.get_object("org.freedesktop.UPower","/org/freedesktop/UPower/devices/battery_BAT0")
 upower_i = dbus.Interface(upower,dbus_interface="org.freedesktop.DBus.Properties")
 properties = upower_i.GetAll("org.freedesktop.UPower.Device")
-config = ConfigParser.RawConfigParser()
-config.read("hwidgets.conf")
-username = config.get("Server","username")
-password = config.get("Server","password")
+username, password = getUsernamePassword()
 couch = couchdb.Server()
 couch.resource.credentials = (username,password)
 db = couch["battery"]

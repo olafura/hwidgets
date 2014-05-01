@@ -7,10 +7,9 @@ import couchdb
 import ConfigParser
 import time
 import datetime
-config = ConfigParser.RawConfigParser()
-config.read("hwidgets.conf")
-username = config.get("Server","username")
-password = config.get("Server","password")
+from conf import getUsernamePassword
+
+username, password = getUsernamePassword()
 couch = couchdb.Server()
 couch.resource.credentials = (username,password)
 db = couch["wifi"]
