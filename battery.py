@@ -31,11 +31,9 @@ try:
 except couchdb.http.ResourceNotFound:
     olddoc = {}
 doc = properties
-#doc = json.dumps(properties)
 doc["_id"] = "battery"
 if "_rev" in olddoc:
     doc["_rev"] = olddoc["_rev"]
-print("doc",doc)
 db.save(doc)
 upower = bus.get_object("org.freedesktop.UPower","/org/freedesktop/UPower")
 def handle_notification(*args, **kwargs):
