@@ -1,6 +1,5 @@
 .PHONY: init
-all :
-	echo "prufa"
+all : init run
 
 #MONO = $(shell sudo apt-get install ubuntu-mono)
 SHELL = /bin/bash
@@ -70,3 +69,16 @@ gitinit :
 	@git submodule update
 
 init : mono copy dbus upower network couchdb pcouchdb gitinit pinit
+
+run :
+	@echo "Running background daemons"
+	@nohup python battery.py > battery.log 2>&1 & echo "$$!" > battery.pid
+	@nohup python wifi.py > wifi.log 2>&1 & echo "$$!" > wifi.pid
+	@echo "Starting up webserver"
+	@python -m SimpleHTTPServer > ../http.log 2>&1 & echo "$$!" > http.pid
+
+
+kill:
+	@kill -9 `cat battery.pid`
+	@kill -9 `cat wifi.pid`
+	@kill -9 `cat http.pid`
