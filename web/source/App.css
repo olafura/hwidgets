@@ -5,8 +5,20 @@
 .nice-padding {
 	padding: 15px;
 }
+.wifi-menu {
+    width: 17em;
+}
+.wifi-ssd {
+    width: 80%;
+    max-width: 80%;
+    min-width: 80%;
+    float:left;
+    height: 2em;
+    margin:0.3em;
+}
 .wifi-signal {
-    position: absolute;
-    right: 0px;
-    top: 0px;
+    width: 15%;
+    max-width: 15%;
+    min-width: 15%;
+    float: right;
 }
