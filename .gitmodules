@@ -7,3 +7,6 @@
 [submodule "web/enyo"]
 	path = web/enyo
 	url = git@github.com:enyojs/enyo.git
+[submodule "web/lib/sundaydata"]
+	path = web/lib/sundaydata
+	url = git@github.com:olafura/sundaydata.git
