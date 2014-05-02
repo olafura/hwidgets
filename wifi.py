@@ -30,8 +30,11 @@ for device in NetworkManager.NetworkManager.GetDevices():
 
 def checkAccessPoints():
     if not currentdev == None:
-        active = currentdev.ActiveAccessPoint
-        access_points = currentdev.GetAccessPoints()
+        try:
+            active = currentdev.ActiveAccessPoint
+            access_points = currentdev.GetAccessPoints()
+        except dbus.exceptions.DBusException:
+            return
         for point in access_points:
             try:
                 doc = db[point.Ssid]
