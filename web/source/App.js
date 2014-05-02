@@ -11,6 +11,12 @@ enyo.kind({
 	components:[
 		{kind: "onyx.Toolbar", style: "height:2em;padding:2px", components: [
             {kind: "onyx.MenuDecorator",style:"float:right;margin:0", onSelect: "itemSelected", components: [
+                {name: "BatteryIcon", kind: "onyx.IconButton", src: "assets/gpm-battery-100.svg"},
+                {name: "BatteryMenu", classes: "wifi-menu", kind: "onyx.Menu", components: [
+                    {content: "Waiting for Battery"}
+                ]}
+            ]},
+            {kind: "onyx.MenuDecorator",style:"float:right;margin:0", onSelect: "itemSelected", components: [
                 {content: "Wifi", ontap: "updateWifi"},
                 {name: "WifiMenu", classes: "wifi-menu", kind: "onyx.Menu", components: [
                     {content: "Waiting for Wifi"}
@@ -26,16 +32,17 @@ enyo.kind({
         this.start();
     },
     start: function() {
-        this.db = new SundayData("http://localhost:5984/wifi/");
+        this.wifidb = new SundayData("http://localhost:5984/wifi/");
+        this.batterydb = new SundayData("http://localhost:5984/battery/");
     },
     create: function() {
         this.inherited(arguments);
         var parent = this;
         setInterval(enyo.bind(this, "populateWifi"), 5000);
-        //var battery = new EventSource('http://localhost:5984/battery/_changes?feed=eventsource');
-        //wifichange.addEventListener('message', function(e) {
-        //    console.log("battery");
-        //});
+        var batterychange = new EventSource('http://localhost:5984/battery/_changes?feed=eventsource');
+        batterychange.addEventListener('message', function(e) {
+            parent.populateBattery();
+        });
 
     },
     updateWifi: function() {
@@ -47,9 +54,44 @@ enyo.kind({
             }
             this.$.WifiMenu.render();
     },
+    populateBattery: function() {
+        var parent = this;
+        this.batterydb.get("battery").done(function(value) {
+            //console.log(value);
+            var timeremaining = value.TimeToEmpty.toString()+" sec";
+            var percentage = value.Percentage.toString()+"%";
+            var capacity = value.Capacity.toFixed(2)+" mAh";
+            var percent_string = parent.getBatteryNumber(value.Percentage);
+            parent.$.BatteryIcon.setSrc("assets/gpm-battery-"+percent_string+".svg");
+            parent.$.BatteryMenu.destroyClientControls();
+            parent.$.BatteryMenu.createComponents([
+                {content: "Percentage: "+percentage},
+                {content: "Time Remaining: "+timeremaining},
+                {content: "Capacity: "+capacity},
+            ]);
+            parent.$.BatteryMenu.render();
+        });
+    },
+    getBatteryNumber: function(num) {
+        /*
+        What this function does is splits the numbers into 4 segments that
+        we have pictures for and uses the rounding function to assign them
+        currectly
+        */
+        var percent = Number(Math.round(num/20))*20
+        var percent_string = percent.toString();
+        if(percent !== 100) {
+            if(percent === 0) {
+                percent_string = "00" + percent_string;
+            } else {
+                percent_string = "0" + percent_string;
+            }
+        }
+        return percent_string
+    },
     populateWifi: function() {
         var parent = this;
-        this.db.allDocs({include_docs: true}).done(function(value) {
+        this.wifidb.allDocs({include_docs: true}).done(function(value) {
             var lst = [];
             var now = Math.round(new Date().getTime()/1000);
             for(var i in value.rows) {
@@ -57,10 +99,10 @@ enyo.kind({
                 var time = ap.doc.time;
                 if((now - 20) < time) {
                     if(ap.doc.is_active) {
-                        lst.unshift({content: "Available", classes: "wifi-ssd"});
+                        lst.unshift({content: "Available", classes: "wifi-head"});
                         lst.unshift({kind:"WifiMenuItem", ssid: ap.id,
                                   signal: ap.doc.strength});
-                        lst.unshift({content: "Current", classes: "wifi-ssd"});
+                        lst.unshift({content: "Current", classes: "wifi-head"});
                     } else {
                         lst.push({kind:"WifiMenuItem", ssid: ap.id,
                                   signal: ap.doc.strength});
