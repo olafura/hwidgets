@@ -2,12 +2,18 @@ enyo.kind({
 	name: "App",
 	kind: "FittableRows",
 	fit: true,
+    published: {
+        wifiap: []
+    },
+    handlers: {
+        //ontap: "updateWifi"
+    },
 	components:[
 		{kind: "onyx.Toolbar", style: "height:2em;padding:2px", components: [
             {kind: "onyx.MenuDecorator",style:"float:right;margin:0", onSelect: "itemSelected", components: [
-                {content: "Wifi"},
+                {content: "Wifi", ontap: "updateWifi"},
                 {name: "WifiMenu", classes: "wifi-menu", kind: "onyx.Menu", components: [
-                    {content: "Ssid2"}
+                    {content: "Waiting for Wifi"}
                 ]}
             ]}
         ]},
@@ -24,26 +30,46 @@ enyo.kind({
     },
     create: function() {
         this.inherited(arguments);
-        this.populateWifi();
+        var parent = this;
+        setInterval(enyo.bind(this, "populateWifi"), 5000);
+        //var battery = new EventSource('http://localhost:5984/battery/_changes?feed=eventsource');
+        //wifichange.addEventListener('message', function(e) {
+        //    console.log("battery");
+        //});
+
+    },
+    updateWifi: function() {
+            this.$.WifiMenu.destroyClientControls();
+            if(this.wifiap.length == 0) {
+                this.$.WifiMenu.createComponents([{content: "Waiting for Wifi"}]);
+            } else {
+                this.$.WifiMenu.createComponents(this.wifiap);
+            }
+            this.$.WifiMenu.render();
     },
     populateWifi: function() {
         var parent = this;
         this.db.allDocs({include_docs: true}).done(function(value) {
-            parent.$.WifiMenu.destroyClientControls();
             var lst = [];
             var now = Math.round(new Date().getTime()/1000);
             for(var i in value.rows) {
                 var ap = value.rows[i];
                 var time = ap.doc.time;
                 if((now - 20) < time) {
-                    lst.push({kind:"WifiMenuItem", ssid: ap.id,
-                              signal: ap.doc.strength});
+                    if(ap.doc.is_active) {
+                        lst.unshift({content: "Available", classes: "wifi-ssd"});
+                        lst.unshift({kind:"WifiMenuItem", ssid: ap.id,
+                                  signal: ap.doc.strength});
+                        lst.unshift({content: "Current", classes: "wifi-ssd"});
+                    } else {
+                        lst.push({kind:"WifiMenuItem", ssid: ap.id,
+                                  signal: ap.doc.strength});
+                    }
                 } else {
-                    console.log("old: ", ap.id);
+                    //console.log("old: ", ap.id);
                 }
             }
-            parent.$.WifiMenu.createComponents(lst);
-            parent.$.WifiMenu.render();
+            parent.setWifiap(lst);
         });
     }
 });
@@ -71,7 +97,7 @@ enyo.kind({
     },
     signalChanged: function() {
         var signal = this.getSignalNumber(this.signal);
-        console.log("signal", signal);
+        //console.log("signal", signal);
         this.$.signalItem.setSrc("assets/nm-signal-"+signal+".svg");
     },
     getSignalNumber: function(num) {
