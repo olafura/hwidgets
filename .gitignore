@@ -53,6 +53,11 @@ docs/_build/
 *.swp
 *.swo
 
+#Web asstets
 web/assets/*.svg
 web/build
 web/deploy
+
+#Pids and out files
+*.pid
+*.out
