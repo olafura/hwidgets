@@ -21,7 +21,7 @@ enyo.kind({
 			{name: "main", classes: "nice-padding", allowHtml: true}
 		]}
 	],
-    getSignalNumber(num) {
+    getSignalNumber: function(num) {
         /*
         What this function does is splits the numbers into 4 segments that
         we have pictures for and uses the rounding function to assign them
