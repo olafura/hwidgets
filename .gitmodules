@@ -1,0 +1,6 @@
+[submodule "web/lib/onyx"]
+	path = web/lib/onyx
+	url = git@github.com:enyojs/onyx.git
+[submodule "web/lib/layout"]
+	path = web/lib/layout
+	url = git@github.com:enyojs/layout.git
