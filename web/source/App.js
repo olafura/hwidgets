@@ -5,15 +5,13 @@ enyo.kind({
 	components:[
 		{kind: "onyx.Toolbar", style: "height:2em;padding:2px", components: [
             {kind: "onyx.MenuDecorator", style:"float:right;margin:0", onSelect: "itemSelected", components: [
-                {content: "Bookmarks menu"},
+                {content: "Wifi"},
                 {kind: "onyx.Menu", components: [
                     {components: [
-                        {kind: "onyx.IconButton", src: "assets/menu-icon-bookmark.png"},
-                        {content: "Bookmarks"}
+                        {content: "Ssid", fit: true},
+                        {kind: "onyx.IconButton", classes: "wifi-signal", src: "assets/nm-signal-100.svg"}
                     ]},
-                    {content: "Favorites"},
-                    {classes: "onyx-menu-divider"},
-                    {content: "Recents"}
+                    {content: "Ssid2"}
                 ]}
             ]}
         ]},

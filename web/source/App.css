@@ -5,3 +5,8 @@
 .nice-padding {
 	padding: 15px;
 }
+.wifi-signal {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
