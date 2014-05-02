@@ -11,7 +11,7 @@ enyo.kind({
 	components:[
 		{kind: "onyx.Toolbar", style: "height:2em;padding:2px", components: [
             {kind: "onyx.MenuDecorator",style:"float:right;margin:0", onSelect: "itemSelected", components: [
-                {name: "BatteryIcon", kind: "onyx.IconButton", src: "assets/gpm-battery-100.svg"},
+                {name: "BatteryIcon", kind: "onyx.IconButton", src: "web/assets/gpm-battery-100.svg"},
                 {name: "BatteryMenu", classes: "wifi-menu", kind: "onyx.Menu", components: [
                     {content: "Waiting for Battery"}
                 ]}
@@ -62,7 +62,7 @@ enyo.kind({
             var percentage = value.Percentage.toString()+"%";
             var capacity = value.Capacity.toFixed(2)+" mAh";
             var percent_string = parent.getBatteryNumber(value.Percentage);
-            parent.$.BatteryIcon.setSrc("assets/gpm-battery-"+percent_string+".svg");
+            parent.$.BatteryIcon.setSrc("web/assets/gpm-battery-"+percent_string+".svg");
             parent.$.BatteryMenu.destroyClientControls();
             parent.$.BatteryMenu.createComponents([
                 {content: "Percentage: "+percentage},
@@ -132,7 +132,7 @@ enyo.kind({
     },
     components: [
         {name: "ssidItem", classes: "wifi-ssd", content: "Ssid"},
-        {name: "signalItem", classes: "wifi-signal", kind: "onyx.IconButton", src: "assets/nm-signal-100.svg"}
+        {name: "signalItem", classes: "wifi-signal", kind: "onyx.IconButton", src: "web/assets/nm-signal-100.svg"}
     ],
     ssidChanged: function() {
         this.$.ssidItem.setContent(this.ssid);
@@ -140,7 +140,7 @@ enyo.kind({
     signalChanged: function() {
         var signal = this.getSignalNumber(this.signal);
         //console.log("signal", signal);
-        this.$.signalItem.setSrc("assets/nm-signal-"+signal+".svg");
+        this.$.signalItem.setSrc("web/assets/nm-signal-"+signal+".svg");
     },
     getSignalNumber: function(num) {
         /*
