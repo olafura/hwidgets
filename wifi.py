@@ -39,14 +39,14 @@ for device in NetworkManager.NetworkManager.GetDevices():
         break
 
 def getAP(point, active_op, available):
-        #print("point op", point.object_path)
+        print("point op", str(point.object_path))
+        print("active op", str(active_op))
         try:
             doc = db[point.Ssid]
         except couchdb.http.ResourceNotFound:
             doc = {}
         doc["_id"] = point.Ssid
-        is_active = point.object_path == active_op
-        is_active = False
+        is_active = str(point.object_path) == str(active_op)
         doc["is_available"] = available
         doc["is_active"] = is_active
         if available:
