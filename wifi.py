@@ -43,6 +43,7 @@ def checkAccessPoints():
             doc["_id"] = point.Ssid
             is_active = point.object_path == active.object_path
             n = datetime.datetime.now()
+            #I'm using unix time bacause it makes it easy to do math
             unix_time = time.mktime(n.timetuple())
             if "time" in doc:
                 doc["last_time"] = doc["time"]

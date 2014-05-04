@@ -12,9 +12,11 @@ from conf import getUsernamePassword
 bus = dbus.SystemBus()
 upower = bus.get_object("org.freedesktop.UPower","/org/freedesktop/UPower/devices/battery_BAT0")
 upower_i = dbus.Interface(upower,dbus_interface="org.freedesktop.DBus.Properties")
+#This get's the admin username and password we set earlier
 username, password = getUsernamePassword()
 couch = couchdb.Server()
 couch.resource.credentials = (username,password)
+#Open a database called "battery"
 db = couch["battery"]
 
 def getCurrentBattery():

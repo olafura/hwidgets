@@ -3,30 +3,34 @@ enyo.kind({
 	kind: "FittableRows",
 	fit: true,
     published: {
+        //The access points
         wifiap: []
-    },
-    handlers: {
-        //ontap: "updateWifi"
     },
 	components:[
 		{kind: "onyx.Toolbar", style: "height:2em;padding:2px", components: [
             {kind: "onyx.MenuDecorator",style:"float:right;margin:0", onSelect: "itemSelected", components: [
+                //The battery icon that will be changed depending on the
+                //battery level
                 {name: "BatteryIcon", kind: "onyx.IconButton", src: "web/assets/gpm-battery-100.svg"},
                 {name: "BatteryMenu", classes: "wifi-menu", kind: "onyx.Menu", components: [
                     {content: "Waiting for Battery"}
                 ]}
             ]},
             {kind: "onyx.MenuDecorator",style:"float:right;margin:0", onSelect: "itemSelected", components: [
+                //I update the wifi menu only when you click on the button
+                //otherwise the we would always be doing interface updates
                 {content: "Wifi", ontap: "updateWifi"},
                 {name: "WifiMenu", classes: "wifi-menu", kind: "onyx.Menu", components: [
                     {content: "Waiting for Wifi"}
                 ]}
             ]}
         ]},
+        //Just a empty area
 		{kind: "enyo.Scroller", fit: true, components: [
 			{name: "main", classes: "nice-padding", allowHtml: true}
 		]}
 	],
+    //As soon as the module is constructed I want to get the database set-up
     constructor: function() {
         this.inherited(arguments);
         this.start();
@@ -35,10 +39,14 @@ enyo.kind({
         this.wifidb = new SundayData("http://localhost:5984/wifi/");
         this.batterydb = new SundayData("http://localhost:5984/battery/");
     },
+    //When everything is up and running I want to start polling
     create: function() {
         this.inherited(arguments);
         var parent = this;
+        //I should be doing request animation frame, I can't use EventSource
+        //because there are tomany updates going on
         setInterval(enyo.bind(this, "populateWifi"), 5000);
+        //With EventSource I only update it when I get a update
         var batterychange = new EventSource('http://localhost:5984/battery/_changes?feed=eventsource');
         batterychange.addEventListener('message', function(e) {
             parent.populateBattery();
