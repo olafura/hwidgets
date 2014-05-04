@@ -45,7 +45,10 @@ enyo.kind({
         var parent = this;
         //I should be doing request animation frame, I can't use EventSource
         //because there are tomany updates going on
-        setInterval(enyo.bind(this, "populateWifi"), 5000);
+        var wifichange = new EventSource('http://localhost:5984/wifi/_changes?feed=eventsource');
+        wifichange.addEventListener('message', function(e) {
+            parent.populateWifi();
+        });
         //With EventSource I only update it when I get a update
         var batterychange = new EventSource('http://localhost:5984/battery/_changes?feed=eventsource');
         batterychange.addEventListener('message', function(e) {
@@ -101,11 +104,9 @@ enyo.kind({
         var parent = this;
         this.wifidb.allDocs({include_docs: true}).done(function(value) {
             var lst = [];
-            var now = Math.round(new Date().getTime()/1000);
             for(var i in value.rows) {
                 var ap = value.rows[i];
-                var time = ap.doc.time;
-                if((now - 20) < time) {
+                if(ap.doc.is_available) {
                     if(ap.doc.is_active) {
                         lst.unshift({content: "Available", classes: "wifi-head"});
                         lst.unshift({kind:"WifiMenuItem", ssid: ap.id,
