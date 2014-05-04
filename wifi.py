@@ -8,7 +8,6 @@ import ConfigParser
 import time
 import datetime
 from conf import getUsernamePassword
-#gobject.threads_init()
 
 username, password = getUsernamePassword()
 couch = couchdb.Server()
@@ -67,5 +66,4 @@ while True:
 
 #nm.connect_to_signal("StateChanged", handle_notification)
 
-#gobject.timeout_add(5000, checkAccessPoints);
 #loop.run()
