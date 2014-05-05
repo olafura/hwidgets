@@ -16,6 +16,23 @@ mono :
 		sudo apt-get install ubuntu-mono;\
 	fi
 
+couchppa :
+	@echo "Checking if couchdb ppa is enabled"
+	@if [ "$(shell apt-cache policy  | grep -c 'cli/ppa')" == "0" ];\
+	then\
+		sudo apt-add-repository ppa:cli/ppa;\
+		sudo apt-get update;\
+	fi
+
+universe :
+	@echo "Checking if universe is enabled"
+	@if [ "$(shell apt-cache policy  | grep -c 'universe')" == "0" ];\
+	then\
+		zenity --error --text="Enable Universe Repository";\
+		sudo software-properties-gtk;\
+		echo "";\
+	fi
+
 
 pcouchdb :
 	@echo "Checking if python-couchdb is installed"
@@ -26,7 +43,7 @@ pcouchdb :
 
 couchdb :
 	@echo "Checking if couchdb is installed"
-	@if [ "$(shell dpkg -l | grep -c 'couchdb ')" == "0" ];\
+	@if [ "$(shell dpkg -l | grep -c ' couchdb ')" == "0" ];\
 	then\
 		sudo apt-get install couchdb;\
 	fi
@@ -54,9 +71,10 @@ gobject :
 
 pip :
 	@echo "Checking if pip is installed"
-	@if [ "$(shell dpkg -l | grep -c 'python-pip ')" == "0" ];\
+	@if [ "$(shell dpkg -l | grep -c 'python-setuptools ')" == "0" ];\
 	then\
-		sudo apt-get install python-pip;\
+		sudo apt-get install python-setuptools;\
+		sudo easy_install pip;\
 	fi
 
 network :
@@ -75,7 +93,7 @@ gitinit :
 	@git submodule init
 	@git submodule update
 
-init : mono copy dbus upower pip network couchdb pcouchdb gitinit pinit
+init : mono copy dbus upower pip network couchppa couchdb pcouchdb gitinit pinit
 
 run :
 	@echo "Running background daemons"
