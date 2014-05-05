@@ -52,11 +52,18 @@ gobject :
 		sudo apt-get install python-gobject;\
 	fi
 
+pip :
+	@echo "Checking if pip is installed"
+	@if [ "$(shell dpkg -l | grep -c 'python-pip ')" == "0" ];\
+	then\
+		sudo apt-get install python-pip;\
+	fi
+
 network :
 	@echo "Checking if python-networkmanager is installed"
-	@if [ "$(shell dpkg -l | grep -c 'python-networkmanager ')" == "0" ];\
+	@if [ "$(shell pip freeze | grep -c 'python-networkmanager')" == "0" ];\
 	then\
-		sudo apt-get install python-networkmanager;\
+		sudo pip install python-networkmanager;\
 	fi
 
 pinit :
@@ -68,7 +75,7 @@ gitinit :
 	@git submodule init
 	@git submodule update
 
-init : mono copy dbus upower network couchdb pcouchdb gitinit pinit
+init : mono copy dbus upower pip network couchdb pcouchdb gitinit pinit
 
 run :
 	@echo "Running background daemons"
