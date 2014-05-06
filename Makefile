@@ -59,6 +59,20 @@ network :
 		sudo apt-get install python-networkmanager;\
 	fi
 
+pyside :
+	@echo "Checking if python-pyside is installed"
+	@if [ "$(shell dpkg -l | grep -c 'python-pyside ')" == "0" ];\
+	then\
+		sudo apt-get install python-pyside;\
+	fi
+
+qtwebkit :
+	@echo "Checking if libqt4-webkit is installed"
+	@if [ "$(shell dpkg -l | grep -c 'libqt4-webkit ')" == "0" ];\
+	then\
+		sudo apt-get install libqt4-webkit;\
+	fi
+
 pinit :
 	@echo "Initialize CouchDB"
 	@python initialize.py
@@ -70,6 +84,8 @@ gitinit :
 
 init : mono copy dbus upower network couchdb pcouchdb gitinit pinit
 
+qtinit : mono copy dbus upower network qtwebkit pyside gitinit
+
 run :
 	@echo "Running background daemons"
 	@nohup python battery.py > battery.log 2>&1 & echo "$$!" > battery.pid
@@ -77,8 +93,16 @@ run :
 	@echo "Starting up webserver"
 	@python -m SimpleHTTPServer > ../http.log 2>&1 & echo "$$!" > http.pid
 
+qtrun :
+	@echo "Starting up webserver"
+	@python -m SimpleHTTPServer > ../http.log 2>&1 & echo "$$!" > http.pid
+	@python QtWeb.py
+
 
 kill:
 	@kill -9 `cat battery.pid`
 	@kill -9 `cat wifi.pid`
+	@kill -9 `cat http.pid`
+
+qtkill:
 	@kill -9 `cat http.pid`
