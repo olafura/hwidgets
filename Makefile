@@ -112,15 +112,11 @@ run :
 	@python -m SimpleHTTPServer > ../http.log 2>&1 & echo "$$!" > http.pid
 
 qtrun :
-	@echo "Starting up webserver"
-	@python -m SimpleHTTPServer > ../http.log 2>&1 & echo "$$!" > http.pid
+	@echo "Starting up Qt"
 	@python QtWeb.py
 
 
 kill:
 	@kill -9 `cat battery.pid`
 	@kill -9 `cat wifi.pid`
-	@kill -9 `cat http.pid`
-
-qtkill:
 	@kill -9 `cat http.pid`

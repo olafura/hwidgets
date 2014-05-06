@@ -15,12 +15,12 @@ class Application(object):
     def show(self):
         self.battery = Battery()
         self.wifi = Wifi()
-        self.url = "http://localhost:8000/qt.html"
+        self.url = QUrl("qt.html")
 
         self.web = QWebView()
 
         self.web.loadFinished.connect(self.onLoad)
-        self.web.load(QUrl(self.url))
+        self.web.load(self.url)
 
         self.web.show()
 
