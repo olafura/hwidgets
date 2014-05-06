@@ -91,13 +91,6 @@ pyside :
 		sudo apt-get install python-pyside;\
 	fi
 
-qtwebkit :
-	@echo "Checking if libqt4-webkit is installed"
-	@if [ "$(shell dpkg -l | grep -c 'libqt4-webkit ')" == "0" ];\
-	then\
-		sudo apt-get install libqt4-webkit;\
-	fi
-
 pinit :
 	@echo "Initialize CouchDB"
 	@python initialize.py
@@ -109,7 +102,7 @@ gitinit :
 
 init : mono copy dbus upower pip network couchppa couchdb pcouchdb gitinit pinit
 
-qtinit : mono copy dbus upower network qtwebkit pyside gitinit
+qtinit : mono copy dbus upower network pyside gitinit
 
 run :
 	@echo "Running background daemons"
